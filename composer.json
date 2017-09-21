@@ -1,6 +1,6 @@
 {
-  "name": "reliv/expressive-serve-static",
-  "description": "A Zend Expressive 2 middleware that serves static assets for you. Is similar to the \"serve-static\" npm package.",
+  "name": "reliv/serve-static",
+  "description": "A PSR11 middleware that serves static assets for you. Is similar to the \"serve-static\" npm package.",
   "type": "library",
   "require": {
     "zendframework/zend-diactoros": "^1.6",
@@ -15,7 +15,7 @@
   ],
   "autoload": {
     "psr-4": {
-      "Reliv\\ExpressiveServeStatic\\": "",
+      "Reliv\\ServeStatic\\": "",
     },
   }
 }
