@@ -1,0 +1,21 @@
+{
+  "name": "reliv/expressive-serve-static",
+  "description": "A Zend Expressive 2 middleware that serves static assets for you. Is similar to the \"serve-static\" npm package.",
+  "type": "library",
+  "require": {
+    "zendframework/zend-diactoros": "^1.6",
+    "http-interop/http-middleware": "^0.5.0"
+  },
+  "license": "BSD",
+  "authors": [
+    {
+      "name": "rodmcnew",
+      "email": "rmcnew@relivinc.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Reliv\\ExpressiveServeStatic\\": "",
+    },
+  }
+}
