@@ -1,6 +1,6 @@
 <?php
 
-namespace Zend\Expressive\ServeStatic;
+namespace Reliv\ExpressiveServeStatic;
 
 use Interop\Http\ServerMiddleware\DelegateInterface;
 use Interop\Http\ServerMiddleware\MiddlewareInterface;
