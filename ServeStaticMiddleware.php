@@ -17,6 +17,9 @@ class ServeStaticMiddleware implements MiddlewareInterface
     {
         $this->options = array_merge(
             [
+                'notFoundResponseBody' => '404 - Not Found',
+                'publicCachePath' => null,
+                'unknownExtensionHeaders' => [],
                 'extensionToHeaders' => [
                     'ez' => ['content-type' => 'application/andrew-inset',],
                     'atom' => ['content-type' => 'application/atom+xml',],
@@ -717,10 +720,7 @@ class ServeStaticMiddleware implements MiddlewareInterface
                     'ice' => ['content-type' => 'x-conference/x-cooltalk',],
                     'sisx' => ['content-type' => 'x-epoc/x-sisx-app',],
                     'exe' => ['content-type' => 'application/octet-stream'],
-                ],
-                'unknownExtensionHeaders' => [],
-                'notFoundResponseBody' => '404 - Not Found',
-                'publicCachePath' => null
+                ]
             ],
             $options
         );
