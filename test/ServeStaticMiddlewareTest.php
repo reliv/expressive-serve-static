@@ -32,7 +32,7 @@ class ServeStaticMiddlewareTest extends TestCase
         $this->assertTrue($responseFromDelegate === $responseFromUnit);
     }
 
-    public function testReturnsFileWhenFileExistsAndIsValid()
+    public function testReturnsFileContentAndProperHeadersWhenFileExistsAndIsValid()
     {
         $unit = new ServeStaticMiddleware(__DIR__ . '/public-test');
         $request = new ServerRequest([], [], 'https://example.com/test.json', 'GET');
@@ -52,5 +52,9 @@ class ServeStaticMiddlewareTest extends TestCase
             $responseFromUnit->getBody()->getContents()
         );
 
+        $this->assertEquals(
+            $responseFromUnit->getHeaders(),
+            ['content-type' => ['application/json']]
+        );
     }
 }
