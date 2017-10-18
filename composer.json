@@ -4,7 +4,7 @@
   "type": "library",
   "require": {
     "zendframework/zend-diactoros": "^1.6",
-    "http-interop/http-middleware": "^0.5.0"
+    "http-interop/http-middleware": "0.* || 1.*"
   },
   "license": "BSD",
   "authors": [
