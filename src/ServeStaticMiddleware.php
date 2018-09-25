@@ -1,19 +1,30 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Reliv\ServeStatic;
 
-use Interop\Http\ServerMiddleware\DelegateInterface;
-use Interop\Http\ServerMiddleware\MiddlewareInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Http\Message\ResponseInterface;
 use Zend\Diactoros\Response;
-use Zend\Diactoros\Response\HtmlResponse;
+use Zend\Diactoros\Stream;
 
 class ServeStaticMiddleware implements MiddlewareInterface
 {
+    /** @var string */
     protected $fileSystemAssetDirectory;
+
+    /** @var array */
     protected $options;
 
-    public function __construct($fileSystemAssetDirectory, $options = [])
+    /**
+     * ServeStaticMiddleware constructor.
+     * @param $fileSystemAssetDirectory
+     * @param array $options
+     */
+    public function __construct(string $fileSystemAssetDirectory, array $options = [])
     {
         $this->options = array_merge(
             [
@@ -32,55 +43,62 @@ class ServeStaticMiddleware implements MiddlewareInterface
         $this->fileSystemAssetDirectory = $fileSystemAssetDirectory;
     }
 
+    /**
+     * @param ServerRequestInterface $request
+     * @param RequestHandlerInterface $handler
+     * @return ResponseInterface
+     */
     public function process(
         ServerRequestInterface $request,
-        DelegateInterface $delegate
-    ) {
+        RequestHandlerInterface $handler
+    ): ResponseInterface
+    {
         $uriSubPath = $request->getUri()->getPath();
 
         // Ensure we have been given a file path to look for
         if (empty($uriSubPath)) {
-            return $delegate->process($request);
+            return $handler->handle($request);
         }
 
+        // Build filePath
         $filePath = realpath($this->fileSystemAssetDirectory . $uriSubPath);
 
         // Ensure someone isn't using dots to go backward past the asset root folder
         if (!strpos($filePath, realpath($this->fileSystemAssetDirectory)) === 0) {
-            return $delegate->process($request);
+            return $handler->handle($request);
         }
 
-        // Ensure the file exists and is not a directory
-        if (!is_file($filePath)) {
-            return $delegate->process($request);
-        }
-
-        $response = new Response();
-
-        $body = $response->getBody();
-
-        $content = file_get_contents($filePath);
-
+        // Write to publicCachePath if configured
         if ($this->options['publicCachePath'] !== null) {
             $writePath = $this->options['publicCachePath'] . $uriSubPath;
             $writeDir = dirname($writePath);
             if (!is_dir($writeDir)) {
                 mkdir($writeDir, 0777, true);
             }
-            file_put_contents($writePath, $content);
+            copy($filePath, $writePath);
         }
 
-        $body->write($content);
-
-        $extentsion = pathinfo($filePath)['extension'];
-        if (array_key_exists($extentsion, $this->options['contentTypes'])) {
-            $response = $response->withHeader('content-type', $this->options['contentTypes'][$extentsion]);
+        // Ensure the file exists and is not a directory
+        if (!is_file($filePath)) {
+            return $handler->handle($request);
         }
 
+        // Build response as stream
+        $body = new Stream($filePath);
+        $response = new Response();
+        $response->withBody($body);
+
+        // Add content type if known
+        $extension = pathinfo($filePath)['extension'];
+        if (array_key_exists($extension, $this->options['contentTypes'])) {
+            $response = $response->withHeader('content-type', $this->options['contentTypes'][$extension]);
+        }
+
+        // Add additional configured headers
         foreach ($this->options['headers'] as $key => $value) {
             $response = $response->withHeader($key, $value);
         }
 
-        return $response->withBody($body);
+        return $response;
     }
 }

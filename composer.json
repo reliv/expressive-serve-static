@@ -1,16 +1,24 @@
 {
   "name": "reliv/serve-static",
-  "description": "A PSR11 middleware that serves static assets for you. Is similar to the \"serve-static\" npm package.",
+  "description": "A PSR-15 middleware that serves static assets for you. Is similar to the \"serve-static\" npm package.",
   "type": "library",
   "require": {
-    "zendframework/zend-diactoros": "^1.6",
-    "http-interop/http-middleware": "0.* || 1.*"
+    "php": "^7.1",
+    "zendframework/zend-diactoros": "^1.7.1",
+    "psr/container": "^1.0",
+    "psr/http-message": "^1.0.1",
+    "psr/http-server-middleware": "^1.0",
+    "zendframework/zend-stratigility": "^3.0"
   },
   "license": "BSD-3-Clause",
   "authors": [
     {
       "name": "rodmcnew",
       "email": "rmcnew@relivinc.com"
+    },
+    {
+      "name": "Tito Duarte",
+      "email": "duartito@gmail.com"
     }
   ],
   "autoload": {
