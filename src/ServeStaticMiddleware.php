@@ -63,6 +63,11 @@ class ServeStaticMiddleware implements MiddlewareInterface
         // Build filePath
         $filePath = realpath($this->fileSystemAssetDirectory . $uriSubPath);
 
+        // Check for invalid path
+        if ($filePath == false) {
+            return $handler->handle($request);
+        }
+
         // Ensure someone isn't using dots to go backward past the asset root folder
         if (!strpos($filePath, realpath($this->fileSystemAssetDirectory)) === 0) {
             return $handler->handle($request);
@@ -86,7 +91,7 @@ class ServeStaticMiddleware implements MiddlewareInterface
         // Build response as stream
         $body = new Stream($filePath);
         $response = new Response();
-        $response->withBody($body);
+        $response = $response->withBody($body);
 
         // Add content type if known
         $extension = pathinfo($filePath)['extension'];

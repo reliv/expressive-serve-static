@@ -17,22 +17,22 @@ class ServeStaticMiddlewarePipeFactory
      * Example config:
      * 'serve_static' => [
      *      '/fun-module/assets' => [
-     *          'fileSystemAssetDirectory => __DIR__ . '/../vendor/fund-module/public'
-     *          'publicCachePath' => __DIR__ . '/../public/fun-module/assets'
-     *          'headers' => [...]
+     *          'fileSystemAssetDirectory' => __DIR__ . '/../vendor/fund-module/public',
+     *          'publicCachePath' => __DIR__ . '/../public/fun-module/assets',
+     *          'headers' => [],
      *      ]
      *  ]
      *
      * @param ContainerInterface $container
-     * @return ServeStaticMiddleware
+     * @return MiddlewarePipeInterface
      */
-    public function __invoke(ContainerInterface $container) : MiddlewarePipeInterface
+    public function __invoke(ContainerInterface $container): MiddlewarePipeInterface
     {
         $config = $container->has('config') ? $container->get('config') : [];
         $config = isset($config['serve_static']) ? $config['serve_static'] : [];
 
         $middleware = new MiddlewarePipe();
-        foreach ($config as $uriPath=>$options) {
+        foreach ($config as $uriPath => $options) {
             if (!array_key_exists('fileSystemAssetDirectory', $options)) {
                 throw new \InvalidArgumentException('key "fileSystemAssetDirectory" missing in config');
             }
