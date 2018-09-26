@@ -9,7 +9,7 @@ use Zend\Stratigility\MiddlewarePipe;
 use Zend\Stratigility\MiddlewarePipeInterface;
 use function Zend\Stratigility\path;
 
-class ServeStaticMiddlewarePipe
+class ServeStaticMiddlewarePipeFactory
 {
     /**
      * Load config and instantiate middleware

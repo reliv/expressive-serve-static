@@ -1,17 +1,11 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: tito.duarte
- * Date: 25.09.2018
- * Time: 19:17
- */
 
 namespace Reliv\ServeStatic;
 
 
 class ConfigProvider
 {
-    public function __invoke() : array
+    public function __invoke(): array
     {
         return [
             'dependencies' => $this->getDependencies(),
@@ -20,13 +14,13 @@ class ConfigProvider
     }
 
 
-    public function getDependencies() : array
+    public function getDependencies(): array
     {
         return [
-            'invokables' => [
-                ServeStaticMiddlewarePipe::class => ServeStaticMiddlewarePipe::class
+            'factories' => [
+                'serve-static-middleware-pipe' => ServeStaticMiddlewarePipeFactory::class
+
             ],
-            'factories'  => [],
         ];
     }
 
@@ -35,7 +29,7 @@ class ConfigProvider
     {
         return [
             [
-                'middleware' => ServeStaticMiddlewarePipe::class,
+                'middleware' => 'serve-static-middleware-pipe',
                 'priority' => 1000
             ],
         ];
