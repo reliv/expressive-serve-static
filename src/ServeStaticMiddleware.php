@@ -73,6 +73,11 @@ class ServeStaticMiddleware implements MiddlewareInterface
             return $handler->handle($request);
         }
 
+        // Ensure the file exists and is not a directory
+        if (!is_file($filePath)) {
+            return $handler->handle($request);
+        }
+
         // Write to publicCachePath if configured
         if ($this->options['publicCachePath'] !== null) {
             $writePath = $this->options['publicCachePath'] . $uriSubPath;
@@ -81,11 +86,6 @@ class ServeStaticMiddleware implements MiddlewareInterface
                 mkdir($writeDir, 0777, true);
             }
             copy($filePath, $writePath);
-        }
-
-        // Ensure the file exists and is not a directory
-        if (!is_file($filePath)) {
-            return $handler->handle($request);
         }
 
         // Build response as stream
