@@ -1,5 +1,5 @@
 # Serve Static
-A Zend Expressive 2 middleware that serves static assets for you
+A PSR-15 middleware that serves static assets for you
 
 Example usage:
 ```php

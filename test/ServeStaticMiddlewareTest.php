@@ -5,11 +5,11 @@ namespace Reliv\ServeStaticTest;
 require_once __DIR__ . '/../src/ContentTypes.php';
 require_once __DIR__ . '/../src/ContentTypes.php';
 
-use Interop\Http\ServerMiddleware\DelegateInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Reliv\ServeStatic\ServeStaticMiddleware;
-use Zend\Diactoros\Request;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
 
@@ -21,13 +21,14 @@ class ServeStaticMiddlewareTest extends TestCase
         $request = new ServerRequest([], [], 'https://example.com/../secrets.php', 'GET');
         $responseFromDelegate = new Response();
 
-        $mockDelagate = $this->getMockBuilder(DelegateInterface::class)->getMock();
-        $mockDelagate->expects($this->once())
-            ->method('process')
+        /** @var RequestHandlerInterface|MockObject $mockRequestHandler */
+        $mockRequestHandler = $this->getMockBuilder(RequestHandlerInterface::class)->getMock();
+        $mockRequestHandler->expects($this->once())
+            ->method('handle')
             ->with($request)
             ->willReturn($responseFromDelegate);
 
-        $responseFromUnit = $unit->process($request, $mockDelagate);
+        $responseFromUnit = $unit->process($request, $mockRequestHandler);
 
         $this->assertTrue($responseFromDelegate === $responseFromUnit);
     }
@@ -37,12 +38,13 @@ class ServeStaticMiddlewareTest extends TestCase
         $unit = new ServeStaticMiddleware(__DIR__ . '/public-test');
         $request = new ServerRequest([], [], 'https://example.com/test.json', 'GET');
 
-        $mockDelagate = $this->getMockBuilder(DelegateInterface::class)->getMock();
+        /** @var RequestHandlerInterface|MockObject $mockRequestHandler */
+        $mockRequestHandler = $this->getMockBuilder(RequestHandlerInterface::class)->getMock();
 
         /**
          * @var $responseFromUnit ResponseInterface
          */
-        $responseFromUnit = $unit->process($request, $mockDelagate);
+        $responseFromUnit = $unit->process($request, $mockRequestHandler);
 
         $expectedFileContents = file_get_contents(__DIR__ . '/public-test/test.json');
 
