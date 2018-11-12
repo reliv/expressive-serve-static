@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Reliv\ServeStatic;
 
 use Psr\Container\ContainerInterface;
+use Psr\Http\Server\MiddlewareInterface;
 use Zend\Stratigility\MiddlewarePipe;
 use Zend\Stratigility\MiddlewarePipeInterface;
 use function Zend\Stratigility\path;
@@ -24,14 +25,14 @@ class ServeStaticMiddlewarePipeFactory
      *  ]
      *
      * @param ContainerInterface $container
-     * @return MiddlewarePipeInterface
+     * @return MiddlewareInterface
      */
-    public function __invoke(ContainerInterface $container): MiddlewarePipeInterface
+    public function __invoke(ContainerInterface $container): MiddlewareInterface
     {
         $config = $container->has('config') ? $container->get('config') : [];
         $config = isset($config['serve_static']) ? $config['serve_static'] : [];
 
-        $middleware = new MiddlewarePipe();
+        $middlewarePipe = new MiddlewarePipe();
         foreach ($config as $uriPath => $options) {
             if (!array_key_exists('fileSystemAssetDirectory', $options)) {
                 throw new \InvalidArgumentException('key "fileSystemAssetDirectory" missing in config');
@@ -40,11 +41,13 @@ class ServeStaticMiddlewarePipeFactory
             $fileSystemAssetDirectory = $options['fileSystemAssetDirectory'];
             unset($options['fileSystemAssetDirectory']);
 
-            $middleware->pipe(path($uriPath, new ServeStaticMiddleware(
+            $middlewarePipe->pipe(path($uriPath, new ServeStaticMiddleware(
                 $fileSystemAssetDirectory,
                 $options
             )));
         }
+
+        $middleware = new ServeStaticMiddlewarePipe($middlewarePipe);
 
         return $middleware;
     }
