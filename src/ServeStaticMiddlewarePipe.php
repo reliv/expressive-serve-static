@@ -8,8 +8,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ResponseInterface;
-use Zend\Diactoros\Response;
-use Zend\Diactoros\Stream;
 use Zend\Stratigility\MiddlewarePipe;
 
 class ServeStaticMiddlewarePipe implements MiddlewareInterface

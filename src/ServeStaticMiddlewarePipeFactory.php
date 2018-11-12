@@ -7,7 +7,6 @@ namespace Reliv\ServeStatic;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Zend\Stratigility\MiddlewarePipe;
-use Zend\Stratigility\MiddlewarePipeInterface;
 use function Zend\Stratigility\path;
 
 class ServeStaticMiddlewarePipeFactory
