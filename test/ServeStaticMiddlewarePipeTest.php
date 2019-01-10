@@ -13,6 +13,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Reliv\ServeStatic\ServeStaticMiddlewarePipeFactory;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
+use Zend\Stratigility\Middleware\PathMiddlewareDecorator;
 use Zend\Stratigility\MiddlewarePipeInterface;
 
 class ServeStaticMiddlewarePipeTest extends TestCase
@@ -71,4 +72,52 @@ class ServeStaticMiddlewarePipeTest extends TestCase
             ['content-type' => ['application/json']]
         );
     }
+
+    public function testSkipsMiddlewareIfPathDoesNotMatch()
+    {
+        /** @var ContainerInterface|MockObject $container */
+        $container = $this->getMockBuilder(ContainerInterface::class)->getMock();
+
+        $container->expects($this->once())
+            ->method('has')
+            ->with('config')
+            ->willReturn(true);
+
+        $container->expects($this->once())
+            ->method('get')
+            ->with('config')
+            ->willReturn([
+                'serve_static' => [
+                    '/files' => [
+                        'fileSystemAssetDirectory' => __DIR__ . '/public-test',
+                    ]
+                ]
+            ]);
+
+        /** @var MiddlewarePipeInterface $middlewarePipe */
+        $middlewarePipe = (new ServeStaticMiddlewarePipeFactory)($container);
+        $request = new ServerRequest([], [], 'https://example.com/other', 'GET');
+
+        $responseFromDelegate = new Response('Not found', 404);
+
+        /** @var RequestHandlerInterface|MockObject $mockRequestHandler */
+        $mockRequestHandler = $this->getMockBuilder(RequestHandlerInterface::class)->getMock();
+        $mockRequestHandler
+            ->expects($this->once())
+            ->method('handle')
+            ->with($request)
+            ->willReturn($responseFromDelegate);
+
+        $pathMiddleware = new PathMiddlewareDecorator('/files', $middlewarePipe);
+        /**
+         * @var $responseFromUnit ResponseInterface
+         */
+        $responseFromUnit = $pathMiddleware->process($request, $mockRequestHandler);
+
+        $this->assertEquals(
+            $responseFromUnit->getStatusCode(),
+            404
+        );
+    }
+
 }
