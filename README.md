@@ -1,3 +1,6 @@
+# Expressive 3 and above NOT SUPPORTED
+For for future support, including expressive 3 support, checkout Tito's fork of this project at https://github.com/fduarte42/zend-expressive-static-files
+
 # Serve Static
 A PSR-15 middleware that serves static assets for you
 
