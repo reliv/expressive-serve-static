@@ -1,4 +1,4 @@
-# Expressive 3 and above NOT SUPPORTED
+# Zend Expressive 3 and above NOT SUPPORTED
 For for future support, including expressive 3 support, try this other project: https://github.com/fduarte42/zend-expressive-static-files
 
 # Serve Static
